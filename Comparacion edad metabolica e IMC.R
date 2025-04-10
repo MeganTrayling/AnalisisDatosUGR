@@ -1,0 +1,22 @@
+library(BioestadisticaR2)
+library(ggplot2)
+library(haven)
+datos <- read_sav("bd_megan.sav")
+str(datos)
+head(datos)
+names(datos)
+colSums(is.na(datos))
+datos$grupo_IMC <- ifelse(datos$INMACO >= 25, "Sobrepeso/Obesidad", "Normal")
+datos$grupo_IMC <- factor(datos$grupo_IMC)
+table(datos$grupo_IMC)
+tapply(datos$edad_mtb, datos$grupo_IMC, summary)
+tapply(datos$edad_mtb, datos$grupo_IMC, sd)
+hist(datos$INMACO, main = "Distribución del IMC", col = "blue")
+hist(datos$edad_mtb, main = "Distribución de Edad Metabólica", col = "purple")
+boxplot_edad <- boxplot(edad_mtb ~ grupo_IMC, data = datos,
+                        main = "Edad Metabólica según Grupo de IMC",
+                        ylab = "Edad Metabólica", xlab = "Grupo IMC",
+                        col = c("blue", "purple"))
+shapiro.test(datos$edad_mtb[datos$grupo_IMC == "Sobrepeso/Obesidad"])
+shapiro.test(datos$edad_mtb[datos$grupo_IMC == "Normal"])
+testwx(m = datos$edad_mtb, grupos = datos$grupo_IMC)
